@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ COPYRIGHT (c) 2017 VOCADO, LLC.  ALL RIGHTS RESERVED.  THIS SOFTWARE CONTAINS
+  ~ TRADE SECRETS AND/OR CONFIDENTIAL INFORMATION PROPRIETARY TO VOCADO, LLC AND/OR
+  ~ ITS LICENSORS. ACCESS TO AND USE OF THIS INFORMATION IS STRICTLY LIMITED AND
+  ~ CONTROLLED BY VOCADO, LLC.  THIS SOFTWARE MAY NOT BE COPIED, MODIFIED, DISTRIBUTED,
+  ~ DISPLAYED, DISCLOSED OR USED IN ANY WAY NOT EXPRESSLY AUTHORIZED BY VOCADO, LLC IN WRITING.
+  -->
+
+<configuration>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%-5level] %logger{15} - %msg%n%rEx</pattern>
+			<immediateFlush>false</immediateFlush>
+		</encoder>
+	</appender>
+
+	<appender name="FILE" class="ch.qos.logback.core.FileAppender">
+		<append>false</append>
+		<file>${application.home:-.}/logs/application.log</file>
+		<encoder>
+			<pattern>%date [%-5level] %logger{36} [%thread] - %msg%n%xException</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="io.gatling" level="INFO" />
+	<!-- Uncomment for logging ALL HTTP request and responses -->
+	 	<!--<logger name="io.gatling.http.ahc" level="TRACE" />-->
+	    <!--<logger name="io.gatling.http.response" level="TRACE" />-->
+	<!-- Uncomment for logging ONLY FAILED HTTP request and responses -->
+	 	<!--<logger name="io.gatling.http.ahc" level="DEBUG" />-->
+	    <!--<logger name="io.gatling.http.response" level="DEBUG" />-->
+
+	<root level="INFO">
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+	</root>
+
+</configuration>
