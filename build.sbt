@@ -30,7 +30,7 @@ lazy val akkaDependencies = Seq(
   "com.typesafe.akka" %% "akka-cluster-sharding" % akkaVersion,
   "de.heikoseeberger" %% "akka-http-circe" % "1.11.0",
   "ch.megard" %% "akka-http-cors" % "0.1.10",
-  "com.github.dnvriend" %% "akka-persistence-inmemory" % "1.3.16" exclude ("org.scalatest", "scalatest")
+  "com.github.dnvriend" %% "akka-persistence-inmemory" % "1.3.18" exclude ("org.scalatest", "scalatest")
 )
 
 val circeVersion = "0.6.1"
@@ -74,7 +74,7 @@ lazy val testDependencies = Seq(
   "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion,
   "net.manub" %% "scalatest-embedded-kafka" % "0.12.0",
   "org.scalacheck" %% "scalacheck" % "1.13.4",
-  "com.github.dnvriend" %% "akka-persistence-inmemory" % "1.3.16" exclude ("org.scalatest", "scalatest")
+  "com.github.dnvriend" %% "akka-persistence-inmemory" % "1.3.18" exclude ("org.scalatest", "scalatest")
 ).map(_ % Test)
 
 lazy val service = (project in file("service"))
