@@ -2,6 +2,7 @@ package com.softwaremill.sandbox.api.http
 
 import java.util.UUID
 
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives.{complete, onSuccess, pathEnd, pathPrefix, post, _}
 import akka.http.scaladsl.server.Route
@@ -11,11 +12,12 @@ import com.softwaremill.sandbox.application.UserActor
 import com.softwaremill.sandbox.application.UserActor.UserRegion
 import kamon.trace.Tracer
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration.DurationInt
 import scala.util.Random
+import akka.pattern.after
 
-class UserController(userRegion: UserRegion)(implicit executionContext: ExecutionContext) {
+class UserController(userRegion: UserRegion)(implicit executionContext: ExecutionContext, actorSystem: ActorSystem) {
 
   implicit val timeout = Timeout(10.seconds)
   private val random = new Random()
@@ -35,9 +37,10 @@ class UserController(userRegion: UserRegion)(implicit executionContext: Executio
       } ~
         get {
           val pause = random.nextInt(1000)
-          //to simulate some work
-          Thread.sleep(pause)
-          complete(withRandomCode(s"user data after: $pause"))
+          val responseMessage = Future.successful(s"user data after: $pause")
+          onSuccess(after(pause millis, actorSystem.scheduler)(responseMessage)) {
+            case message: String => complete(withRandomCode(message))
+          }
         }
     }
   }
