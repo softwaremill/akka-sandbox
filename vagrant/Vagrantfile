@@ -1,0 +1,38 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Require YAML module
+require 'yaml'
+
+# Read YAML file with box details
+servers = YAML.load_file('hosts.yaml')
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  # Iterate through entries in YAML file
+  servers.each do |servers|
+    config.vm.define servers["name"] do |srv|
+      srv.vm.box = "ubuntu/xenial64"
+      srv.vm.hostname = servers["host_name"]
+      srv.vm.network "private_network", ip: servers["ip"]
+      srv.vm.provider "virtualbox" do |vb|
+        # Customize the amount of memory on the VM:
+        vb.memory = "1512"
+      end
+      srv.vm.provision "shell",
+                       path: "bootstrap.sh",
+                       env: {"datadog_api_key" => ENV['DATADOG_API_KEY']}
+      srv.vm.provision "shell",
+                       privileged: false,
+                       run: "always",
+                       path: "run_app.sh",
+                       env: {"host_ip" => servers["ip"],
+                             "user_creation_lag" => servers["user_creation_lag"],
+                             "seed_node" => servers["seed_node"]}
+    end
+  end
+end

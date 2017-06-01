@@ -5,17 +5,11 @@ import io.gatling.http.Predef._
 
 import scala.concurrent.duration._
 
-class UserSimulation extends BaseSimulation {
-
-  val userScenario = scenario("User scenario")
-    .exec(http("create user").post("/user"))
+class UserCreationSimulation extends BaseSimulation {
 
   setUp(
-    userScenario
-      .inject(rampUsers(100) over(15 seconds) )
+    scenario("User creation").exec(userCreationChain)
+      .inject(rampUsers(100) over (120 seconds))
       .protocols(httpConf))
     .assertions(forAll.failedRequests.percent.is(0))
 }
-
-
-

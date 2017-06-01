@@ -9,3 +9,5 @@ addSbtPlugin("io.kamon" % "sbt-aspectj-runner" % "1.0.1")
 addSbtPlugin("com.geirsson" %% "sbt-scalafmt" % "0.4.10")
 
 addSbtPlugin("io.gatling" % "gatling-sbt" % "2.2.1")
+
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.14.4")
