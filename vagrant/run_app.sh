@@ -4,6 +4,7 @@ function cloneRepo {
     echo "Cloning repo"
     rm -rf akka-sandbox
     git clone https://github.com/softwaremill/akka-sandbox
+    git checkout part3
 }
 
 function runApp {
