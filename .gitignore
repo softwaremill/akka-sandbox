@@ -22,3 +22,5 @@ logs/
 # vagrant
 vagrant/*.log
 vagrant/.vagrant
+
+application.log
