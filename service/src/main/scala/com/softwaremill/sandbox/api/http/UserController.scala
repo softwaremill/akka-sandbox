@@ -2,51 +2,47 @@ package com.softwaremill.sandbox.api.http
 
 import java.util.UUID
 
-import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives.{complete, onSuccess, pathEnd, pathPrefix, post, _}
 import akka.http.scaladsl.server.Route
-import akka.pattern.ask
-import akka.util.Timeout
-import com.softwaremill.sandbox.application.UserActor
-import com.softwaremill.sandbox.application.UserActor.UserRegion
+import com.softwaremill.sandbox.application.UserService
+import com.typesafe.scalalogging.LazyLogging
+import kamon.akka.http.KamonTraceDirectives
 import kamon.trace.Tracer
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.duration.DurationInt
-import scala.util.Random
-import akka.pattern.after
+import scala.concurrent.ExecutionContext
 
-class UserController(userRegion: UserRegion)(implicit executionContext: ExecutionContext, actorSystem: ActorSystem) {
-
-  implicit val timeout = Timeout(10.seconds)
-  private val random = new Random()
+class UserController(userService: UserService)(implicit executionContext: ExecutionContext) extends KamonTraceDirectives with LazyLogging {
 
   def routes: Route = pathPrefix("user") {
     pathEnd {
       post {
-        val traceableUserCreation = Tracer.withNewContext("user-creation") {
-          (userRegion ? UserActor.CreateUser(UUID.randomUUID().toString, "andrzej" + random.nextInt(100))).mapTo[String].map { result =>
-            Tracer.currentContext.finish()
-            result
-          }
-        }
-        onSuccess(traceableUserCreation) {
-          case name: String => complete(s"created user: $name")
-        }
-      } ~
-        get {
-          val pause = random.nextInt(1000)
-          val responseMessage = Future.successful(s"user data after: $pause")
-          onSuccess(after(pause millis, actorSystem.scheduler)(responseMessage)) {
-            case message: String => complete(withRandomCode(message))
-          }
-        }
-    }
-  }
+        traceName("user-creation") {
+          val uuid = UUID.randomUUID()
+          logger.debug(s"processing user $uuid creation request [token ${Tracer.currentContext.token}]")
 
-  private def withRandomCode(msg: String): StatusCode = {
-    val codes = List(200, 201, 202, 203, 304)
-    StatusCodes.custom(codes(random.nextInt(5)), msg)
+          onSuccess(userService.createUser(uuid)) {
+            case name: String =>
+              logger.debug(s"creating user $uuid finished [token ${Tracer.currentContext.token}]")
+              complete(201, s"user $uuid created")
+          }
+        }
+      }
+    } ~
+      pathPrefix(JavaUUID) { uuid =>
+        pathEnd {
+          get {
+            traceName("get-user") {
+              onSuccess(userService.getUser(uuid)) {
+                case Some(userName) =>
+                  logger.debug(s"getting user $uuid finished [token ${Tracer.currentContext.token}]")
+                  complete(200, s"user $uuid found, name is: $userName")
+                case None =>
+                  logger.debug(s"user $uuid not found [token ${Tracer.currentContext.token}]")
+                  complete(404, s"user $uuid not found")
+              }
+            }
+          }
+        }
+      }
   }
 }

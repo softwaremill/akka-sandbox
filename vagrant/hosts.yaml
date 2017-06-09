@@ -1,0 +1,11 @@
+---
+- name: sandbox_host_1
+  host_name: sandbox-host-1
+  user_creation_lag: 2000
+  ip: 192.168.69.100
+  seed_node: "akka.tcp://sandbox-actor-system@192.168.69.100:2551"
+- name: sandbox_host_2
+  host_name: sandbox-host-2
+  user_creation_lag: 3000
+  ip: 192.168.69.101
+  seed_node: "akka.tcp://sandbox-actor-system@192.168.69.100:2551"
