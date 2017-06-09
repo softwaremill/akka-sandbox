@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
                                 run: "always",
                                 path: "run_app.sh",
                                 env: {"host_ip" => "192.168.69.100",
-                                      "user_creation_lag" => 10,
+                                      "user_creation_lag" => 2000,
                                       "seed_node" => "akka.tcp://sandbox-actor-system@192.168.69.100:2551"}
   end
 
@@ -43,7 +43,7 @@ Vagrant.configure("2") do |config|
                                 run: "always",
                                 path: "run_app.sh",
                                 env: {"host_ip" => "192.168.69.101",
-                                      "user_creation_lag" => 30,
+                                      "user_creation_lag" => 3000,
                                       "seed_node" => "akka.tcp://sandbox-actor-system@192.168.69.100:2551"}
   end
 end

@@ -43,20 +43,20 @@ class UserActor(userActorConfig: UserActorConfig) extends PersistentActor with D
       }
 
     case command: GetUser =>
-      Thread.sleep(random.nextInt(500))
+//      Thread.sleep(random.nextInt(500))
       log.debug("getting user [token {}]", Tracer.currentContext.token)
       sender() ! userState.map(_.name)
   }
 
   private def postCreationProcessing = {
     val segment = Tracer.currentContext.startSegment("post-creation-processing", "business-logic", "xyz")
-    Thread.sleep(random.nextInt(500))
+//    Thread.sleep(random.nextInt(500))
     segment.finish()
   }
 
   private def validationLogic = {
     val segment = Tracer.currentContext.startSegment("external-validation-service", "validation-logic", "xyz")
-    Thread.sleep(random.nextInt(userActorConfig.userCreationLag))
+//    Thread.sleep(random.nextInt(userActorConfig.userCreationLag))
     segment.finish()
   }
 
