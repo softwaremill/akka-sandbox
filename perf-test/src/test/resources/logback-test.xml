@@ -25,7 +25,7 @@
 	</appender>
 
 	<logger name="io.gatling" level="INFO" />
-	<!-- Uncomment for logging ALL HTTP request and responses -->
+	 <!--Uncomment for logging ALL HTTP request and responses-->
 	 	<!--<logger name="io.gatling.http.ahc" level="TRACE" />-->
 	    <!--<logger name="io.gatling.http.response" level="TRACE" />-->
 	<!-- Uncomment for logging ONLY FAILED HTTP request and responses -->

@@ -1,0 +1,49 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure("2") do |config|
+
+  config.vm.define "sandbox_host_1" do |sandbox_host_1|
+    sandbox_host_1.vm.hostname = 'sandbox-host-1'
+    sandbox_host_1.vm.box = "ubuntu/xenial64"
+    sandbox_host_1.vm.network :private_network, ip: "192.168.69.100"
+    sandbox_host_1.vm.provider "virtualbox" do |vb|
+      # Customize the amount of memory on the VM:
+      vb.memory = "1512"
+    end
+    sandbox_host_1.vm.provision "shell",
+                                path: "bootstrap.sh",
+                                env: {"datadog_api_key" => ENV['DATADOG_API_KEY']}
+    sandbox_host_1.vm.provision "shell",
+                                privileged: false,
+                                run: "always",
+                                path: "run_app.sh",
+                                env: {"host_ip" => "192.168.69.100",
+                                      "user_creation_lag" => 2000,
+                                      "seed_node" => "akka.tcp://sandbox-actor-system@192.168.69.100:2551"}
+  end
+
+  config.vm.define "sandbox_host_2" do |sandbox_host_2|
+    sandbox_host_2.vm.hostname = 'sandbox-host-2'
+    sandbox_host_2.vm.box = "ubuntu/xenial64"
+    sandbox_host_2.vm.network :private_network, ip: "192.168.69.101"
+    sandbox_host_2.vm.provider "virtualbox" do |vb|
+      # Customize the amount of memory on the VM:
+      vb.memory = "1512"
+    end
+    sandbox_host_2.vm.provision "shell",
+                                path: "bootstrap.sh",
+                                env: {"datadog_api_key" => ENV['DATADOG_API_KEY']}
+    sandbox_host_2.vm.provision "shell",
+                                privileged: false,
+                                run: "always",
+                                path: "run_app.sh",
+                                env: {"host_ip" => "192.168.69.101",
+                                      "user_creation_lag" => 3000,
+                                      "seed_node" => "akka.tcp://sandbox-actor-system@192.168.69.100:2551"}
+  end
+end

@@ -18,3 +18,7 @@ logs/
 # Binaries
 *.class
 *.pyc
+
+# vagrant
+vagrant/*.log
+vagrant/.vagrant
