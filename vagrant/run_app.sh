@@ -9,7 +9,7 @@ function cloneRepo {
 function runApp {
     echo "Compiling repo (this may take some time, first time)"
     cd akka-sandbox
-    git checkout part2
+    git checkout part3
     sbt assembly
 
 #    echo "Downloading aspectjweaver"
